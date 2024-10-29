@@ -1,0 +1,38 @@
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <ng-container *ngFor="let header of header">
+                    <th>
+                        <ng-container *ngIf="header.type === 'checkbox';else showOther">
+                            <input type="checkbox" (change)="onChanges()"/>
+                        </ng-container>
+                        <ng-template #showOther>
+                            {{ header.name }}
+                        </ng-template>
+                    </th>
+                   
+                </ng-container>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of datas">
+                <td *ngFor="let header of header">
+                    <ng-container *ngIf="header.type === 'checkbox';">
+                        <input type="checkbox"  (change)="primeFun(item.id)" />
+                    </ng-container>
+                    <ng-container *ngIf="header.type === 'dropdown';else showValue">
+                        <select>
+                            <ng-container *ngFor="let value of header.selectValues">
+                                <option value="value.value">{{value.label}}</option>
+                            </ng-container>
+                        </select>
+                    </ng-container>
+                    <ng-template #showValue>
+                        {{ getValueByHeader(item, header.key) }}
+                    </ng-template>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
