@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { DataTableColumn } from 'src/app/store/user.model';
 
 @Component({
   selector: 'table-layout',
@@ -9,8 +10,9 @@ export class TableLayoutComponent {
 
   drop!:any[];
   checkBox: boolean = false;
-  checkSelection:boolean = false;
-  @Input() header!: any[];
+  noOfChecked: any[] = [];
+
+  @Input() header!: DataTableColumn[];
   @Input() datas!: any[];
   @Output() mod: EventEmitter<any> = new EventEmitter()
 
@@ -21,20 +23,30 @@ export class TableLayoutComponent {
 
   }
 
-  primeFun(id:any)
+  onToggleChanges(event:any, id:any)
   {
-    // this.checkBox = false;
-    this.checkSelection = this.checkSelection ? false: true;
-    if(this.checkSelection)
-    this.mod.emit(id);
+    if(event.target.checked)
+      this.noOfChecked.push(id);
+    else
+      this.noOfChecked = this.noOfChecked.filter(item => item !== id)
+    this.mod.emit(this.noOfChecked);
   }
 
   getValueByHeader(item: any, headerKey?: string): string {
     return headerKey ? item[headerKey] || '' : ''; // Access the value using the key if it exists
   }
 
-  onChanges()
+  onChanges(event:any)
   {
-    this.checkBox = this.checkBox ? false: true;
+    const checked = event.target.checked; 
+    this.datas.forEach((item)=> {
+      item.selected = checked
+      if(checked)
+      this.noOfChecked.push(item.id)
+      else
+      this.noOfChecked.splice(0, this.noOfChecked.length)
+    })
+    this.mod.emit(this.noOfChecked);
+
   }
 }
