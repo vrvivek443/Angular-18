@@ -2,7 +2,7 @@
     <table>
         <thead>
             <tr>
-                <ng-container *ngFor="let header of header">
+                <ng-container *ngFor="let header of columns">
                     <th>
                         <ng-container *ngIf="header.type === 'checkbox';else showOther">
                             <input type="checkbox" (change)="onChanges($event)"/>
@@ -17,7 +17,7 @@
         </thead>
         <tbody>
             <tr *ngFor="let item of datas">
-                <td *ngFor="let header of header">
+                <td *ngFor="let header of columns">
                     <ng-container *ngIf="header.type === 'checkbox';">
                         <input type="checkbox" [checked]="item.selected" (change)="onToggleChanges($event, item.id)" />
                     </ng-container>

@@ -8,45 +8,41 @@ import { DataTableColumn } from 'src/app/store/user.model';
 })
 export class TableLayoutComponent {
 
-  drop!:any[];
+  drop!: any[];
   checkBox: boolean = false;
-  noOfChecked: any[] = [];
+  noOfChecked: Set<number> = new Set();  // Initialize as Set for unique IDs
 
-  @Input() header!: DataTableColumn[];
+  @Input() columns!: DataTableColumn[];
   @Input() datas!: any[];
-  @Output() mod: EventEmitter<any> = new EventEmitter()
+  @Output() mod: EventEmitter<Set<number>> = new EventEmitter();  // Emit as Set type
 
-  dropdownValues: any[] = []
- 
-  ngOnInit()
-  { 
+  dropdownValues: any[] = [];
 
-  }
+  ngOnInit() {}
 
-  onToggleChanges(event:any, id:any)
-  {
-    if(event.target.checked)
-      this.noOfChecked.push(id);
-    else
-      this.noOfChecked = this.noOfChecked.filter(item => item !== id)
+  onToggleChanges(event: any, id: number) {
+    if (event.target.checked) {
+      this.noOfChecked.add(id);  // Add to Set
+    } else {
+      this.noOfChecked.delete(id);  // Remove from Set
+    }
     this.mod.emit(this.noOfChecked);
   }
 
   getValueByHeader(item: any, headerKey?: string): string {
-    return headerKey ? item[headerKey] || '' : ''; // Access the value using the key if it exists
+    return headerKey ? item[headerKey] || '' : '';  // Access the value using the key if it exists
   }
 
-  onChanges(event:any)
-  {
-    const checked = event.target.checked; 
-    this.datas.forEach((item)=> {
-      item.selected = checked
-      if(checked)
-      this.noOfChecked.push(item.id)
-      else
-      this.noOfChecked.splice(0, this.noOfChecked.length)
-    })
-    this.mod.emit(this.noOfChecked);
+  onChanges(event: any) {
+    const checked = event.target.checked;
 
+    if (checked) {
+      this.datas.forEach(item => this.noOfChecked.add(item.id));  // Add all IDs to Set
+    } else {
+      this.noOfChecked.clear();  // Clear all IDs from Set
+    }
+
+    this.datas.forEach(item => item.selected = checked);
+    this.mod.emit(this.noOfChecked);
   }
 }
